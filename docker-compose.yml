@@ -1,0 +1,52 @@
+services:
+
+  postgres:
+    image: postgres:18
+    container_name: ecommerce-postgres
+
+    environment:
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./sql:/docker-entrypoint-initdb.d
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -d ecommerce_db"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+
+    container_name: ecommerce-pipeline
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ecommerce_db
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - ./data:/app/data
+
+    command: python src/pipeline.py
+
+
+volumes:
+  postgres_data:
