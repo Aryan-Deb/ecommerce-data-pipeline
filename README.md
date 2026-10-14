@@ -99,4 +99,3 @@ B.Tech Computer Science & Engineering — 2026
 =======
 # ecommerce-data-pipeline
 Dockerized ETL pipeline using Python, Pandas, PostgreSQL and SQL analytics.
->>>>>>> 9c862a08e6303e3f5a238008e8aac4a17c3a774a
